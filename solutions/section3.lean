@@ -1,14 +1,16 @@
--- Theorem Proving in Lean 4, Section 3
--- Propositions and Proofs
--- https://lean-lang.org/theorem_proving_in_lean4/propositions_and_proofs.html
+/-!
+    Theorem Proving in Lean 4, Section 3
+    Propositions and Proofs
+    https://lean-lang.org/theorem_proving_in_lean4/propositions_and_proofs.html
+-/
 
 variable (p q r : Prop)
 
 -- commutativity of ∧ and ∨
 example : p ∧ q ↔ q ∧ p :=
   Iff.intro
-    (fun h : p ∧ q => ⟨h.right, h.left⟩ )
-    (fun h : q ∧ p => ⟨h.right, h.left⟩ )
+    (fun h : p ∧ q => ⟨h.right, h.left⟩)
+    (fun h : q ∧ p => ⟨h.right, h.left⟩)
 
 example : p ∨ q ↔ q ∨ p :=
   Iff.intro
@@ -198,7 +200,7 @@ example : (((p → q) → p) → p) :=
       (fun hp : p => hp)
       (fun hnp : ¬p => h (fun hp : p => absurd hp hnp)))
 
--- Prove following statement without using classical logic
+-- Prove the following statement without using classical logic
 example : ¬(p ↔ ¬p) :=
   (fun h : (p ↔ ¬p) =>
     have hnp : ¬p := (fun hp : p => h.mp hp hp);
