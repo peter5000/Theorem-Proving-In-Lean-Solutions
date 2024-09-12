@@ -1,9 +1,16 @@
--- Theorem Proving in Lean 4, Section 5
--- Tactics
--- https://lean-lang.org/theorem_proving_in_lean4/tactics.html
+/-!
+    Theorem Proving in Lean 4, Section 5
+    Tactics
+    https://lean-lang.org/theorem_proving_in_lean4/tactics.html
+-/
 
--- 1
--- Propositions and Proofs
+-- Turn off unused variables linter, since some problem statements have
+-- unused variables.
+set_option linter.unusedVariables false
+
+-- Problem 1. Go back to the exercises in Chapter Propositions and Proofs and Chapter Quantifiers and Equality and redo as many as you can now with tactic proofs, using also `rw` and `simp` as appropriate.
+
+-- Propositions and Proofs --
 variable (p q r : Prop)
 
 -- commutativity of ∧ and ∨
@@ -204,15 +211,13 @@ example : (((p → q) → p) → p) := by
   | inl hp => exact hp
   | inr hnp => exact h (by intro hp; exact absurd hp hnp)
 
--- Prove following statement without using classical logic
+-- Prove the following statement without using classical logic
 example : ¬(p ↔ ¬p) := by
   intro h
   let hnp : ¬p := (by intro hp; exact h.mp hp hp)
   exact hnp (h.mpr hnp)
 
-------------------------------------------------------------------
-
--- Quantifiers and Equality
+-- Quantifiers and Equality --
 
 variable (α : Type) (p q : α → Prop)
 
@@ -340,8 +345,7 @@ example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := by
     | inl hr => have ⟨a, hpx⟩ := h hr; exact ⟨a, (by intro _; assumption)⟩
     | inr hnr => exact ⟨a, (by intro hr; exact absurd hr hnr)⟩
 
--- 2
--- One line proof using tactic combinators
+-- Problem 2: Use tactic combinators to obtain a one line proof of the following.
 example (p q r : Prop) (hp : p)
         : (p ∨ q ∨ r) ∧ (q ∨ p ∨ r) ∧ (q ∨ r ∨ p) := by
   repeat constructor <;> repeat (first | apply Or.inl; assumption | apply Or.inr | assumption)
