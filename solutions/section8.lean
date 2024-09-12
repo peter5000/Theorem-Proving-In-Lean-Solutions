@@ -1,9 +1,11 @@
--- Theorem Proving in Lean 4, Section 8
--- Induction and Recursions
--- https://lean-lang.org/theorem_proving_in_lean4/induction_and_recursion.html
+/-!
+    Theorem Proving in Lean 4, Section 8
+    Induction and Recursion
+    https://lean-lang.org/theorem_proving_in_lean4/induction_and_recursion.html
+-/
 
--- 1
--- Open a namespace Hidden to avoid naming conflicts, and use the equation compiler to define addition, multiplication, and exponentiation on the natural numbers. Then use the equation compiler to derive some of their basic properties.
+-- Problem 1. Open a namespace `Hidden` to avoid naming conflicts, and use the equation compiler to define addition, multiplication, and exponentiation on the natural numbers. Then use the equation compiler to derive some of their basic properties.
+
 namespace Hidden
 
 open Nat
@@ -11,8 +13,6 @@ open Nat
 def add : Nat → Nat → Nat
   | m , 0     => m
   | m , n + 1 => succ (add m n)
-
-#print add
 
 def mul : Nat → Nat → Nat
   | _, zero   => zero
@@ -30,17 +30,13 @@ theorem zero_add : ∀ n, add zero n = n
 
 end Hidden
 
--- 2
--- Similarly, use the equation compiler to define some basic operations on lists (like the reverse function) and prove theorems about lists by induction (such as the fact that reverse (reverse xs) = xs for any list xs).
+-- Problem 2. Similarly, use the equation compiler to define some basic operations on lists (like the `reverse` function) and prove theorems about lists by induction (such as the fact that `reverse (reverse xs) = xs` for any list `xs`).
 
 def reverse (as : List α) : List α :=
   let rec loop : List α → List α
     | []    => []
     | a::as => loop as ++ [a]
   loop as
-
-#check reverse
-#eval reverse [3,2,1]
 
 theorem ra_single_eq (xs : List α) (x : α) :
     reverse.loop (xs ++ [x]) = x :: reverse xs := by
@@ -60,8 +56,8 @@ theorem rr_eq (as : List α) : reverse (reverse as) = as := by
     | a::as => simp[reverse.loop, aux as, ra_single_eq, reverse]
   exact aux as
 
--- 3
--- Define your own function to carry out course-of-value recursion on the natural numbers. Similarly, see if you can figure out how to define WellFounded.fix on your own.
+-- Problem 3. Define your own function to carry out course-of-value recursion on the natural numbers. Similarly, see if you can figure out how to define `WellFounded.fix` on your own.
+namespace Hidden
 open Nat
 
 theorem mod_lemma {x y : Nat} : 0 < y ∧ y ≤ x → x - y < x :=
@@ -74,44 +70,23 @@ def mod.F (x : Nat) (f : (x₁ : Nat) → x₁ < x → Nat → Nat) (y : Nat) : 
     x
 
 noncomputable def mod := WellFounded.fix (measure id).wf mod.F
+end Hidden
 
-#reduce mod 23 8 -- 7
-
--- 4
--- Following the examples in Section Dependent Pattern Matching, define a function that will append two vectors. This is tricky; you will have to define an auxiliary function.
+-- Problem 4. Following the examples in the section "Dependent Pattern Matching", define a function that will append two vectors. This is tricky; without the equation compiler, you would have to define an auxiliary function.
 
 inductive Vector (α : Type u) : Nat → Type u
   | nil  : Vector α 0
   | cons : α → {n : Nat} → Vector α n → Vector α (n+1)
 
-namespace Vector
+def append : {n m : Nat} → (v₁ : Vector α n) → (v₂ : Vector α m) → Vector α (n + m)
+  | 0, 0, Vector.nil, Vector.nil => Vector.nil
+  | _, 0, as, Vector.nil => as
+  | 0, m+1, Vector.nil, Vector.cons a as =>
+    Vector.cons a (append Vector.nil as)
+  | n+1, m+1, Vector.cons a as, Vector.cons b bs =>
+    Vector.cons a (append (append as (Vector.cons b Vector.nil)) bs)
 
-#check @Vector.casesOn
-
-
-end Vector
-
-def appendAux (v1 : Vector α m) (v2 : Vector α n) : Vector α (m + n) :=
-  Vector.casesOn (motive := fun x _ => Vector α (x + n)) v1
-    (fun (a : α) (m : Nat) (as : Vector α m) =>
-      Vector.casesOn (motive := fun y _ => Vector α (m + y)) v2)
-    -- (α → {n_1 : Nat} → Vector α n_1 → Vector α (m + n)) → Vector α (m + n)
-
-def append {α : Type u} {n m : Nat} (v₁ : Vector α n) (v₂ : Vector α m) : Vector α (n + m) :=
-  appendAux v₁ v₂
-
-
-def tailAux (v : Vector α m) : m = n + 1 → Vector α n :=
-  Vector.casesOn (motive := fun x _ => x = n + 1 → Vector α n) v
-    (fun h : 0 = n + 1 => Nat.noConfusion h)
-    (fun (a : α) (m : Nat) (as : Vector α m) =>
-     fun (h : m + 1 = n + 1) =>
-       Nat.noConfusion h (fun h1 : m = n => h1 ▸ as))
-
-def tail (v : Vector α (n+1)) : Vector α n :=
-  tailAux v rfl
-
--- 5
+-- Problem 5. Consider the following type of arithmetic expressions. The idea is that `var n` is a variable, `vₙ`, and `const n` is the constant whose value is `n`.
 inductive Expr where
   | const : Nat → Expr
   | var : Nat → Expr
@@ -121,22 +96,11 @@ inductive Expr where
 
 open Expr
 
-def sampleExpr : Expr :=
-  plus (times (var 0) (const 7)) (times (const 2) (var 1))
-
 def eval (v : Nat → Nat) : Expr → Nat
   | const n     => n
   | var n       => v n
   | plus e₁ e₂  => eval v e₁ + eval v e₂
   | times e₁ e₂ => eval v e₁ * eval v e₂
-
-def sampleVal : Nat → Nat
-  | 0 => 5
-  | 1 => 6
-  | _ => 0
-
--- Try it out. You should get 47 here.
--- #eval eval sampleVal sampleExpr
 
 def simpConst : Expr → Expr
   | plus (const n₁) (const n₂)  => const (n₁ + n₂)
