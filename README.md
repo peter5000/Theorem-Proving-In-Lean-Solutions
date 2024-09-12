@@ -1,5 +1,7 @@
 # Solutions to Theorem Proving in Lean (TPIL)
 
+_Written by Peter Oh, with contributions and edits by Herman Chau._
+
 This repository contains solutions to the exercises in sections 3, 4, 5, 7, and 8 of the textbook [Theorem Proving in Lean](https://lean-lang.org/theorem_proving_in_lean4/). The solutions are written in Lean 4, specifically v4.12.0-rc1.
 
 ## Setting up Lean
