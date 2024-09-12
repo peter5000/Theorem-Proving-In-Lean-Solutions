@@ -2,9 +2,6 @@
 -- Propositions and Proofs
 -- https://lean-lang.org/theorem_proving_in_lean4/propositions_and_proofs.html
 
-import LatexInLean
-show_panel_widgets [latex]
-
 variable (p q r : Prop)
 
 -- commutativity of ∧ and ∨

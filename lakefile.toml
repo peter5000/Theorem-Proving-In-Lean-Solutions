@@ -1,0 +1,13 @@
+name = "TPILSolutions"
+defaultTargets = ["TPILSolutions"]
+
+[[lean_lib]]
+name = "TPILSolutions"
+srcDir = "solutions"
+roots = [
+  "section3",
+  "section4",
+  "section5",
+  "section7",
+  "section8"
+]
