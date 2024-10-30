@@ -76,7 +76,7 @@ example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False :=
 -- Problem 4. Remember that, without any parameters, an expression of type `Prop` is just an assertion. Fill in the definitions of `prime` and `Fermat_prime` below, and construct each of the given assertions. For example, you can say that there are infinitely many primes by asserting that for every natural number `n`, there is a prime number greater than `n`. Goldbach's weak conjecture states that every odd number greater than 5 is the sum of three primes. Look up the definition of a Fermat prime or any of the other statements, if necessary.
 
 def even (n : Nat) : Prop :=
-  ∃ (z : Nat), (z = 2 * n)
+  ∃ (z : Nat), (n = 2 * z)
 
 def divides (x y : Nat) : Prop :=
   ∃ k, k*x = y
@@ -84,25 +84,25 @@ def divides (x y : Nat) : Prop :=
 infix:50 " ∣ " => divides
 
 def prime (n : Nat) : Prop :=
-  2 ≤ n ∧ ∀x : Nat, (∃ k : Nat, k*x = n) ∧ ¬(∃y : Nat, x = y ∧ ¬(y = 1) ∧ ¬(y = n))
+  (2 ≤ n) ∧ (∀ k, divides k n → k = 1 ∨ k = n)
 
 def infinitely_many_primes : Prop :=
   ∀n : Nat, (∃x, (prime x) ∧ (x > n))
 
 def Fermat_prime (n : Nat) : Prop :=
-  (prime n) ∧ ∃x : Nat, n = 2*x + 1
+  (prime n) ∧ ∃x : Nat, n = 2^(2^x) + 1
 
 def infinitely_many_Fermat_primes : Prop :=
   ∀n : Nat, (∃x, (Fermat_prime x) ∧ (x > n))
 
 def goldbach_conjecture : Prop :=
-  ∀x : Nat, (x > 2) ∧ (even x) → ∃y:Nat, ∃z:Nat, (prime y) ∧ (prime z) ∧ x = y + z
+  ∀x : Nat, (x > 2) ∧ (even x) → ∃ y z, (prime y) ∧ (prime z) ∧ (x = y + z)
 
 def Goldbach's_weak_conjecture : Prop :=
-  ∀x : Nat, ¬(even x) ∧ (x > 5) → ∃a:Nat, ∃b : Nat, ∃c : Nat, (prime a) ∧ (prime b) ∧ (prime c) ∧ x = a + b + c
+  ∀x : Nat, ¬(even x) ∧ (x > 5) → ∃a b c, (prime a) ∧ (prime b) ∧ (prime c) ∧ x = a + b + c
 
 def Fermat's_last_theorem : Prop :=
-  ∀a : Nat, ∀b : Nat, ∀c: Nat, ∀n :Nat, (a > 0) ∧ (b > 0) ∧ (c > 0) ∧ (n > 2) ∧ ¬(a^n + b^n = c^n)
+  ¬∃ a b c n, (a > 0) ∧ (b > 0) ∧ (c > 0) ∧ (n > 2) ∧ (a^n + b^n = c^n)
 
 -- Problem 5. Prove as many of the identities listed in the Existential Quantifier section as you can.
 
