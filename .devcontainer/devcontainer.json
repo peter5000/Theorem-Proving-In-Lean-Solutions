@@ -1,0 +1,13 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "leanprover.lean4"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/kcaze/lean4-devcontainer-feature/lean4:1.0.6": {}
+  }
+}
